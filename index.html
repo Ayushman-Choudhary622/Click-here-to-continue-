@@ -2,13 +2,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Check</title>
+    <title>System Breach</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; text-align: center; background: black; color: white; overflow: hidden; }
+        body { font-family: 'Courier New', monospace; text-align: center; background: black; color: lime; overflow: hidden; }
         .container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .hidden { display: none; }
-        .warning { font-size: 2em; color: red; animation: blink 0.3s infinite alternate; }
+        .warning { font-size: 2em; color: red; animation: blink 0.2s infinite alternate; }
         @keyframes blink { from { opacity: 1; } to { opacity: 0; } }
         @keyframes glitch {
             0% { transform: translate(3px, -3px) skewX(-10deg); filter: blur(2px); }
@@ -18,62 +18,67 @@
             100% { transform: translate(0, 0) skewX(0); filter: blur(0); }
         }
         .glitch { animation: glitch 0.1s infinite; }
-        .rgb-text { animation: rgbShift 1s infinite alternate; }
+        .rgb-text { animation: rgbShift 0.5s infinite alternate; }
         @keyframes rgbShift {
             0% { color: red; }
             50% { color: green; }
             100% { color: blue; }
         }
         .code-rain { font-family: monospace; font-size: 14px; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; color: lime; overflow: hidden; white-space: pre-wrap; }
+        .hacking-text { position: absolute; top: 10%; left: 5%; font-size: 18px; text-align: left; }
     </style>
 </head>
 <body>
     <div class="container" id="mainScreen">
-        <h1 class="glitch rgb-text">Click to Continue</h1>
-        <button onclick="startScan()">Continue</button>
+        <h1 class="glitch rgb-text">SECURITY BREACH DETECTED</h1>
+        <button onclick="startScan()">Attempt Recovery</button>
     </div>
     <div class="container hidden" id="scanScreen">
-        <h1 class="glitch rgb-text">Analyzing Device...</h1>
-        <p id="scanProgress">Scanning: 0%</p>
+        <h1 class="glitch rgb-text">Attempting System Recovery...</h1>
+        <p id="scanProgress">Progress: 0%</p>
     </div>
     <div class="container hidden" id="errorScreen">
-        <h1 class="warning glitch">⚠ SYSTEM FAILURE ⚠</h1>
-        <p class="glitch">Critical Error Detected!</p>
-        <p class="glitch">DO NOT TURN OFF YOUR DEVICE</p>
-        <p id="shutdownTimer">Forced Shutdown in: 10s</p>
+        <h1 class="warning glitch">⚠ SYSTEM OVERRIDE ⚠</h1>
+        <p class="glitch">Unauthorized Access Detected</p>
+        <p class="glitch">Data Extraction in Progress...</p>
+        <p id="shutdownTimer">Device Lockdown in: 10s</p>
     </div>
     <div class="container hidden" id="finalMessage">
-        <h1 class="glitch rgb-text">Happy April Fool's Day!</h1>
+        <h1 class="glitch rgb-text">HAPPY APRIL FOOL'S DAY!</h1>
     </div>
     <div class="code-rain hidden" id="codeRain"></div>
+    <div class="hacking-text hidden" id="hackingText"></div>
     <script>
         function startScan() {
             document.getElementById('mainScreen').classList.add('hidden');
             document.getElementById('scanScreen').classList.remove('hidden');
             let progress = 0;
             let interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 20);
+                progress += Math.floor(Math.random() * 15);
                 if (progress >= 100) {
                     clearInterval(interval);
                     showErrorScreen();
                 } else {
-                    document.getElementById('scanProgress').innerText = `Scanning: ${progress}%`;
+                    document.getElementById('scanProgress').innerText = `Progress: ${progress}%`;
                 }
-            }, 700);
+            }, 500);
         }
         function showErrorScreen() {
             document.getElementById('scanScreen').classList.add('hidden');
             document.getElementById('errorScreen').classList.remove('hidden');
             document.getElementById('codeRain').classList.remove('hidden');
+            document.getElementById('hackingText').classList.remove('hidden');
             generateCodeRain();
+            generateHackingText();
             let countdown = 10;
             let shutdownInterval = setInterval(() => {
                 countdown--;
-                document.getElementById('shutdownTimer').innerText = `Forced Shutdown in: ${countdown}s`;
+                document.getElementById('shutdownTimer').innerText = `Device Lockdown in: ${countdown}s`;
                 if (countdown === 0) {
                     clearInterval(shutdownInterval);
                     document.getElementById('errorScreen').classList.add('hidden');
                     document.getElementById('codeRain').classList.add('hidden');
+                    document.getElementById('hackingText').classList.add('hidden');
                     document.getElementById('finalMessage').classList.remove('hidden');
                 }
             }, 1000);
@@ -96,6 +101,25 @@
                 }
                 codeRain.innerText = newText;
             }, 300);
+        }
+        function generateHackingText() {
+            const hackingText = document.getElementById("hackingText");
+            const messages = [
+                "Initializing Data Extraction...", 
+                "Bypassing Firewall...", 
+                "Injecting Payload...", 
+                "Retrieving Sensitive Data...", 
+                "Compromising Security Protocols...",
+                "Decrypting Personal Files...",
+                "Uploading to Remote Server..."
+            ];
+            let index = 0;
+            setInterval(() => {
+                if (index < messages.length) {
+                    hackingText.innerText += `\n> ${messages[index]}`;
+                    index++;
+                }
+            }, 1000);
         }
     </script>
 </body>
