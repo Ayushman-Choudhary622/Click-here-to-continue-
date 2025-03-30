@@ -30,6 +30,7 @@
 </head>
 <body>
     <audio id="glitchSound" src="data:audio/wav;base64,UklGRjwAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYAAAACAgICAgICA" preload="auto"></audio>
+    <audio id="laughSound" src="data:audio/wav;base64,UklGRiIAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYAAAACAgICAgICA" preload="auto"></audio>
     <div class="container" id="mainScreen">
         <h1 class="glitch rgb-text">SECURITY BREACH DETECTED</h1>
         <button onclick="startScan()">Attempt Recovery</button>
@@ -83,6 +84,7 @@
                     document.getElementById('codeRain').classList.add('hidden');
                     document.getElementById('hackingText').classList.add('hidden');
                     document.getElementById('finalMessage').classList.remove('hidden');
+                    playLaughSound();
                 }
             }, 1000);
         }
@@ -126,6 +128,9 @@
         }
         function playGlitchSound() {
             document.getElementById('glitchSound').play();
+        }
+        function playLaughSound() {
+            document.getElementById('laughSound').play();
         }
     </script>
 </body>
