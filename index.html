@@ -1,205 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>System Breach</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Courier New', monospace;
-      text-align: center;
-      background: black;
-      color: lime;
-      overflow: hidden;
-      position: relative;
-    }
-    /* Main containers are above the code rain */
-    .container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-    }
-    .hidden { display: none; }
-    .warning {
-      font-size: 2em;
-      color: red;
-      animation: blink 0.2s infinite alternate;
-    }
-    @keyframes blink {
-      from { opacity: 1; }
-      to { opacity: 0; }
-    }
-    @keyframes glitch {
-      0% { transform: translate(3px, -3px) skewX(-10deg); filter: blur(2px); }
-      25% { transform: translate(-3px, 3px) skewX(10deg); filter: blur(3px); }
-      50% { transform: translate(3px, 3px) skewX(-10deg); filter: blur(2px); }
-      75% { transform: translate(-3px, -3px) skewX(10deg); filter: blur(3px); }
-      100% { transform: translate(0, 0) skewX(0); filter: blur(0); }
-    }
-    .glitch { animation: glitch 0.1s infinite; }
-    .rgb-text { animation: rgbShift 0.5s infinite alternate; }
-    @keyframes rgbShift {
-      0% { color: red; }
-      50% { color: green; }
-      100% { color: blue; }
-    }
-    /* Code rain in the background */
-    .code-rain {
-      font-family: monospace;
-      font-size: 14px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      color: lime;
-      overflow: hidden;
-      white-space: pre-wrap;
-      z-index: 1;
-      pointer-events: none;
-      opacity: 0.4;
-    }
-    /* Hacking text messages positioned at the top left */
-    .hacking-text {
-      position: absolute;
-      top: 10%;
-      left: 5%;
-      font-size: 18px;
-      text-align: left;
-      z-index: 2;
-      white-space: pre-wrap;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Breach</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Courier New', monospace; text-align: center; background: black; color: lime; overflow: hidden; }
+        .container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
+        .hidden { display: none; }
+        .warning { font-size: 2em; color: red; animation: blink 0.2s infinite alternate; }
+        @keyframes blink { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes glitch {
+            0% { transform: translate(3px, -3px) skewX(-10deg); filter: blur(2px); }
+            25% { transform: translate(-3px, 3px) skewX(10deg); filter: blur(3px); }
+            50% { transform: translate(3px, 3px) skewX(-10deg); filter: blur(2px); }
+            75% { transform: translate(-3px, -3px) skewX(10deg); filter: blur(3px); }
+            100% { transform: translate(0, 0) skewX(0); filter: blur(0); }
+        }
+        .glitch { animation: glitch 0.1s infinite; }
+        .rgb-text { animation: rgbShift 0.5s infinite alternate; }
+        @keyframes rgbShift {
+            0% { color: red; }
+            50% { color: green; }
+            100% { color: blue; }
+        }
+        .code-rain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; color: lime; overflow: hidden; white-space: pre-wrap; opacity: 0.6; z-index: 1; }
+        .hacking-text { position: absolute; top: 5%; left: 5%; font-size: 18px; text-align: left; z-index: 5; }
+    </style>
 </head>
 <body>
-  <!-- Background code rain layer -->
-  <div class="code-rain" id="codeRain"></div>
-
-  <!-- Main screen -->
-  <div class="container" id="mainScreen">
-    <h1 class="glitch rgb-text">SECURITY BREACH DETECTED</h1>
-    <button onclick="startScan()">Attempt Recovery</button>
-  </div>
-
-  <!-- Scanning screen -->
-  <div class="container hidden" id="scanScreen">
-    <h1 class="glitch rgb-text">Attempting System Recovery...</h1>
-    <p id="scanProgress">Progress: 0%</p>
-  </div>
-
-  <!-- Error screen -->
-  <div class="container hidden" id="errorScreen">
-    <h1 class="warning glitch">⚠ SYSTEM OVERRIDE ⚠</h1>
-    <p class="glitch">Unauthorized Access Detected</p>
-    <p class="glitch">Data Extraction in Progress...</p>
-    <p id="shutdownTimer">Device Lockdown in: 10s</p>
-  </div>
-
-  <!-- Final message screen -->
-  <div class="container hidden" id="finalMessage">
-    <h1 class="glitch rgb-text">HAPPY APRIL FOOL'S DAY!</h1>
-  </div>
-
-  <!-- Hacking text messages -->
-  <div class="hacking-text hidden" id="hackingText"></div>
-
-  <script>
-    // Play a beep sound using the Web Audio API
-    function playBeep() {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      oscillator.type = 'sawtooth';
-      oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
-      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      oscillator.start();
-      setTimeout(() => { oscillator.stop(); }, 150);
-    }
-
-    // Start the "recovery" scan
-    function startScan() {
-      document.getElementById('mainScreen').classList.add('hidden');
-      document.getElementById('scanScreen').classList.remove('hidden');
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 15);
-        if (progress >= 100) {
-          clearInterval(interval);
-          showErrorScreen();
-        } else {
-          document.getElementById('scanProgress').innerText = `Progress: ${progress}%`;
-          playBeep();
+    <audio id="glitchSound" src="data:audio/wav;base64,UklGRjwAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYAAAACAgICAgICA" preload="auto"></audio>
+    <div class="container" id="mainScreen">
+        <h1 class="glitch rgb-text">SECURITY BREACH DETECTED</h1>
+        <button onclick="startScan()">Attempt Recovery</button>
+    </div>
+    <div class="container hidden" id="scanScreen">
+        <h1 class="glitch rgb-text">Attempting System Recovery...</h1>
+        <p id="scanProgress">Progress: 0%</p>
+    </div>
+    <div class="container hidden" id="errorScreen">
+        <h1 class="warning glitch">⚠ SYSTEM OVERRIDE ⚠</h1>
+        <p class="glitch">Unauthorized Access Detected</p>
+        <p class="glitch">Data Extraction in Progress...</p>
+        <p id="shutdownTimer">Device Lockdown in: 10s</p>
+    </div>
+    <div class="container hidden" id="finalMessage">
+        <h1 class="glitch rgb-text">HAPPY APRIL FOOL'S DAY!</h1>
+    </div>
+    <div class="code-rain hidden" id="codeRain"></div>
+    <div class="hacking-text hidden" id="hackingText"></div>
+    <script>
+        function startScan() {
+            playGlitchSound();
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('scanScreen').classList.remove('hidden');
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15);
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showErrorScreen();
+                } else {
+                    document.getElementById('scanProgress').innerText = `Progress: ${progress}%`;
+                }
+            }, 500);
         }
-      }, 500);
-    }
-
-    // Show error screen with hacking effects and code rain
-    function showErrorScreen() {
-      document.getElementById('scanScreen').classList.add('hidden');
-      document.getElementById('errorScreen').classList.remove('hidden');
-      document.getElementById('hackingText').classList.remove('hidden');
-      generateCodeRain();
-      generateHackingText();
-      let countdown = 10;
-      const shutdownInterval = setInterval(() => {
-        countdown--;
-        document.getElementById('shutdownTimer').innerText = `Device Lockdown in: ${countdown}s`;
-        playBeep();
-        if (countdown === 0) {
-          clearInterval(shutdownInterval);
-          document.getElementById('errorScreen').classList.add('hidden');
-          document.getElementById('hackingText').classList.add('hidden');
-          document.getElementById('finalMessage').classList.remove('hidden');
+        function showErrorScreen() {
+            playGlitchSound();
+            document.getElementById('scanScreen').classList.add('hidden');
+            document.getElementById('errorScreen').classList.remove('hidden');
+            document.getElementById('codeRain').classList.remove('hidden');
+            document.getElementById('hackingText').classList.remove('hidden');
+            generateCodeRain();
+            generateHackingText();
+            let countdown = 10;
+            let shutdownInterval = setInterval(() => {
+                countdown--;
+                document.getElementById('shutdownTimer').innerText = `Device Lockdown in: ${countdown}s`;
+                if (countdown === 0) {
+                    clearInterval(shutdownInterval);
+                    document.getElementById('errorScreen').classList.add('hidden');
+                    document.getElementById('codeRain').classList.add('hidden');
+                    document.getElementById('hackingText').classList.add('hidden');
+                    document.getElementById('finalMessage').classList.remove('hidden');
+                }
+            }, 1000);
         }
-      }, 1000);
-    }
-
-    // Generate continuously updating code rain as a background effect
-    function generateCodeRain() {
-      const codeRain = document.getElementById("codeRain");
-      function updateCode() {
-        let codeText = "";
-        for (let i = 0; i < 500; i++) {
-          const randomChar = String.fromCharCode(Math.floor(Math.random() * 94) + 33);
-          codeText += randomChar;
-          if (i % 80 === 0) codeText += "\n";
+        function generateCodeRain() {
+            const codeRain = document.getElementById("codeRain");
+            let codeText = "";
+            for (let i = 0; i < 500; i++) {
+                let randomChar = String.fromCharCode(Math.floor(Math.random() * 94) + 33);
+                codeText += randomChar;
+                if (i % 80 === 0) codeText += "\n";
+            }
+            codeRain.innerText = codeText;
+            setInterval(() => {
+                let newText = "";
+                for (let i = 0; i < 500; i++) {
+                    let randomChar = String.fromCharCode(Math.floor(Math.random() * 94) + 33);
+                    newText += randomChar;
+                    if (i % 80 === 0) newText += "\n";
+                }
+                codeRain.innerText = newText;
+            }, 300);
         }
-        codeRain.innerText = codeText;
-      }
-      updateCode();
-      setInterval(updateCode, 300);
-    }
-
-    // Generate hacking messages that simulate a data breach process
-    function generateHackingText() {
-      const hackingText = document.getElementById("hackingText");
-      const messages = [
-        "Initializing Data Extraction...", 
-        "Bypassing Firewall...", 
-        "Injecting Payload...", 
-        "Retrieving Sensitive Data...", 
-        "Compromising Security Protocols...",
-        "Decrypting Personal Files...",
-        "Uploading to Remote Server..."
-      ];
-      let index = 0;
-      hackingText.innerText = "";
-      const msgInterval = setInterval(() => {
-        if (index < messages.length) {
-          hackingText.innerText += "> " + messages[index] + "\n";
-          playBeep();
-          index++;
-        } else {
-          clearInterval(msgInterval);
+        function generateHackingText() {
+            const hackingText = document.getElementById("hackingText");
+            const messages = [
+                "Initializing Data Extraction...", 
+                "Bypassing Firewall...", 
+                "Injecting Payload...", 
+                "Retrieving Sensitive Data...", 
+                "Compromising Security Protocols...",
+                "Decrypting Personal Files...",
+                "Uploading to Remote Server..."
+            ];
+            let index = 0;
+            setInterval(() => {
+                if (index < messages.length) {
+                    hackingText.innerText += `\n> ${messages[index]}`;
+                    index++;
+                }
+            }, 1000);
         }
-      }, 1000);
-    }
-  </script>
+        function playGlitchSound() {
+            document.getElementById('glitchSound').play();
+        }
+    </script>
 </body>
 </html>
