@@ -18,15 +18,22 @@
             100% { transform: translate(0, 0) skewX(0); filter: blur(0); }
         }
         .glitch { animation: glitch 0.1s infinite; }
+        .rgb-text { animation: rgbShift 1s infinite alternate; }
+        @keyframes rgbShift {
+            0% { color: red; }
+            50% { color: green; }
+            100% { color: blue; }
+        }
+        .code-rain { font-family: monospace; font-size: 14px; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; color: lime; overflow: hidden; white-space: pre-wrap; }
     </style>
 </head>
 <body>
     <div class="container" id="mainScreen">
-        <h1 class="glitch">Click to Continue</h1>
+        <h1 class="glitch rgb-text">Click to Continue</h1>
         <button onclick="startScan()">Continue</button>
     </div>
     <div class="container hidden" id="scanScreen">
-        <h1 class="glitch">Analyzing Device...</h1>
+        <h1 class="glitch rgb-text">Analyzing Device...</h1>
         <p id="scanProgress">Scanning: 0%</p>
     </div>
     <div class="container hidden" id="errorScreen">
@@ -36,8 +43,9 @@
         <p id="shutdownTimer">Forced Shutdown in: 10s</p>
     </div>
     <div class="container hidden" id="finalMessage">
-        <h1 class="glitch" style="color: lime;">Happy April Fool's Day!</h1>
+        <h1 class="glitch rgb-text">Happy April Fool's Day!</h1>
     </div>
+    <div class="code-rain hidden" id="codeRain"></div>
     <script>
         function startScan() {
             document.getElementById('mainScreen').classList.add('hidden');
@@ -56,6 +64,8 @@
         function showErrorScreen() {
             document.getElementById('scanScreen').classList.add('hidden');
             document.getElementById('errorScreen').classList.remove('hidden');
+            document.getElementById('codeRain').classList.remove('hidden');
+            generateCodeRain();
             let countdown = 10;
             let shutdownInterval = setInterval(() => {
                 countdown--;
@@ -63,9 +73,29 @@
                 if (countdown === 0) {
                     clearInterval(shutdownInterval);
                     document.getElementById('errorScreen').classList.add('hidden');
+                    document.getElementById('codeRain').classList.add('hidden');
                     document.getElementById('finalMessage').classList.remove('hidden');
                 }
             }, 1000);
+        }
+        function generateCodeRain() {
+            const codeRain = document.getElementById("codeRain");
+            let codeText = "";
+            for (let i = 0; i < 500; i++) {
+                let randomChar = String.fromCharCode(Math.floor(Math.random() * 94) + 33);
+                codeText += randomChar;
+                if (i % 80 === 0) codeText += "\n";
+            }
+            codeRain.innerText = codeText;
+            setInterval(() => {
+                let newText = "";
+                for (let i = 0; i < 500; i++) {
+                    let randomChar = String.fromCharCode(Math.floor(Math.random() * 94) + 33);
+                    newText += randomChar;
+                    if (i % 80 === 0) newText += "\n";
+                }
+                codeRain.innerText = newText;
+            }, 300);
         }
     </script>
 </body>
