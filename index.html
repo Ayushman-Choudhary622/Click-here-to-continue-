@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Check</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; text-align: center; background: black; color: white; overflow: hidden; }
+        .container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .hidden { display: none; }
+        .warning { font-size: 2em; color: red; animation: blink 0.5s infinite alternate; }
+        @keyframes blink { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes glitch {
+            0% { transform: translate(2px, -2px); }
+            25% { transform: translate(-2px, 2px); }
+            50% { transform: translate(2px, 2px); }
+            75% { transform: translate(-2px, -2px); }
+            100% { transform: translate(0, 0); }
+        }
+        .glitch { animation: glitch 0.1s infinite; }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainScreen">
+        <h1>Click to Continue</h1>
+        <button onclick="startScan()">Continue</button>
+    </div>
+    <div class="container hidden" id="scanScreen">
+        <h1>Analyzing Device...</h1>
+        <p id="scanProgress">Scanning: 0%</p>
+    </div>
+    <div class="container hidden" id="errorScreen">
+        <h1 class="warning glitch">⚠ SYSTEM FAILURE ⚠</h1>
+        <p class="glitch">Critical Error Detected!</p>
+        <p class="glitch">DO NOT TURN OFF YOUR DEVICE</p>
+        <p id="shutdownTimer">Forced Shutdown in: 10s</p>
+    </div>
+    <script>
+        function startScan() {
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('scanScreen').classList.remove('hidden');
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 20);
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showErrorScreen();
+                } else {
+                    document.getElementById('scanProgress').innerText = `Scanning: ${progress}%`;
+                }
+            }, 700);
+        }
+        function showErrorScreen() {
+            document.getElementById('scanScreen').classList.add('hidden');
+            document.getElementById('errorScreen').classList.remove('hidden');
+            let countdown = 10;
+            let shutdownInterval = setInterval(() => {
+                countdown--;
+                document.getElementById('shutdownTimer').innerText = `Forced Shutdown in: ${countdown}s`;
+                playBeep();
+                if (countdown === 0) {
+                    clearInterval(shutdownInterval);
+                    document.body.innerHTML = "<h1 style='color:red;'>Shutting Down...</h1>";
+                }
+            }, 1000);
+        }
+        function playBeep() {
+            let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            let oscillator = audioCtx.createOscillator();
+            oscillator.type = "square";
+            oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
+            oscillator.connect(audioCtx.destination);
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 200);
+        }
+        document.addEventListener("keydown", function(event) {
+            event.preventDefault();
+        });
+        window.onbeforeunload = function() {
+            return "System failure detected. Leaving may cause permanent damage.";
+        };
+    </script>
+</body>
+</html>
